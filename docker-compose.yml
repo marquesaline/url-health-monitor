@@ -1,0 +1,52 @@
+services:
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: rails_api
+    depends_on:
+      - db
+    environment:
+      RAILS_ENV: development
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api:/rails
+    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+
+  db:
+    image: postgres:17
+    container_name: rails_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  test:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: rails_test
+    environment:
+      RAILS_ENV: test
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_TEST_DB}
+    volumes:
+      - ./api:/rails
+    depends_on:
+      - db
+    command: ["bundle", "exec", "rails", "test"]
+
+volumes:
+  postgres_data:
