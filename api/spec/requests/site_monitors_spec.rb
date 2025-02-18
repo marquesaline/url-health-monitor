@@ -29,5 +29,23 @@ RSpec.describe 'SiteMonitors', type: :request do
     end
   end
 
+  describe 'POST /site_monitors' do
+    let(:valid_attributes) do 
+      { 
+        name: 'Test', 
+        url: 'http://test.com', 
+        check_interval: 5,
+        status: 'up',
+        user_id: 1
+      } 
+    end
+
+    it 'Should create a monitor' do
+      post '/site_monitors', params: valid_attributes
+      expect(response).to have_http_status(:created)
+      expect(JSON.parse(response.body)['name']).to eq('Test')
+    end
+  end
+
 end
 

@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  resources :site_monitors, only: [:index, :show]
+  resources :site_monitors, only: [:index, :show, :create]
 end
