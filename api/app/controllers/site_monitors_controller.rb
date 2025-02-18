@@ -1,5 +1,5 @@
 class SiteMonitorsController < ApplicationController
-    before_action :set_site_monitor, only: [:show]
+    before_action :set_site_monitor, only: [:show, :update, :destroy]
     
     # GET /site_monitors
     def index 
@@ -19,9 +19,21 @@ class SiteMonitorsController < ApplicationController
             render json: site_monitor.errors, status: :unprocessable_entity
         end
     end
-  
+
+    def update
+        if @site_monitor.update(site_monitor_params)
+            render json: @site_monitor
+        else
+            render json: @site_monitor.errors, status: :unprocessable_entity
+        end
+    end
+
+    def destroy
+        @site_monitor.destroy
+        head :no_content
+    end
+
     private
-    
  
     def set_site_monitor
       @site_monitor = SiteMonitor.find_by(id: params[:id]) 
