@@ -57,7 +57,7 @@ services:
       API_USERNAME: ${API_USERNAME}
       API_PASSWORD: ${API_PASSWORD}
       REDIS_URL: redis://redis:6379/0
-    command: ["bundle", "exec", "sidekiq"]
+    command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
 
   test:
     build: 
