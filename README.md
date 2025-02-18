@@ -10,10 +10,15 @@ It uses Sidekiq + Redis for background jobs and includes Basic Authentication fo
 ### Features
 
 ✅ CRUD for Site Monitors (Create, Read, Update, Delete)
+
 ✅ Background Jobs using Sidekiq to check URL availability
+
 ✅ Authentication (Basic Auth)
+
 ✅ Statistics (Uptime Percentage & Average Response Time)
+
 ✅ Scheduled Jobs (Sidekiq Scheduler) for automatic health checks
+
 ✅ Full Test (RSpec)
 
 
