@@ -46,7 +46,8 @@ services:
       - ./api:/rails
     depends_on:
       - db
-    command: ["bundle", "exec", "rails", "test"]
+    command: >
+      sh -c "bundle exec rails db:create db:migrate && bundle exec rspec"
 
 volumes:
   postgres_data:
