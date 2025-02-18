@@ -8,7 +8,7 @@ class SiteMonitorsController < ApplicationController
   
     # GET /site_monitors/:id
     def show
-      render json: @site_monitor
+      render json: @site_monitor, include: :checks
     end
 
     def create

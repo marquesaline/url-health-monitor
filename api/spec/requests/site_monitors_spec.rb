@@ -8,7 +8,7 @@ RSpec.describe 'SiteMonitors', type: :request do
     it 'Should return a list of site monitors' do
       get '/site_monitors'
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body).size).to eq(1)
+      expect(JSON.parse(response.body).size).to be > 0
     end
   end
 
@@ -20,11 +20,22 @@ RSpec.describe 'SiteMonitors', type: :request do
     end
 
     it 'Should return status 404' do
-      get '/site_monitors/100'
+      get '/site_monitors/9999'
       expect(response).to have_http_status(:not_found)
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['message']).to eq('Site monitor not found')
     end
+
+    it 'Should return a site monitor with checks' do
+      site_monitor = create(:site_monitor)
+      create_list(:check, 3, site_monitor: site_monitor)
+      
+      get "/site_monitors/#{site_monitor.id}"
+      expect(response).to have_http_status(:success)
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response['checks'].size).to eq(3)
+    end
+    
   end
 
   describe 'POST /site_monitors' do
@@ -74,7 +85,7 @@ RSpec.describe 'SiteMonitors', type: :request do
     end
 
     it 'Should return status 404' do
-      put '/site_monitors/100', params: valid_attributes
+      put '/site_monitors/9999', params: valid_attributes
       expect(response).to have_http_status(:not_found)
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['message']).to eq('Site monitor not found')

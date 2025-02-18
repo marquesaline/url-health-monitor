@@ -1,4 +1,5 @@
 class SiteMonitor < ApplicationRecord
+    has_many :checks, dependent: :destroy
     enum status: { down: 0, up: 1 }
 
     validates :name, presence: true
