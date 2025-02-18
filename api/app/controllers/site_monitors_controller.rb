@@ -3,12 +3,18 @@ class SiteMonitorsController < ApplicationController
     
     # GET /site_monitors
     def index 
-      render json: SiteMonitor.all
+        render json: SiteMonitor.all
     end
   
     # GET /site_monitors/:id
     def show
-      render json: @site_monitor, include: :checks
+        render json: @site_monitor.as_json(
+            include: :checks,
+            methods: [
+                :average_response_time,
+                :uptime_percentage
+            ]
+        )
     end
 
     def create
@@ -36,8 +42,8 @@ class SiteMonitorsController < ApplicationController
     private
  
     def set_site_monitor
-      @site_monitor = SiteMonitor.find_by(id: params[:id]) 
-      return render json: { message: 'Site monitor not found' }, status: :not_found unless @site_monitor
+        @site_monitor = SiteMonitor.find_by(id: params[:id]) 
+        return render json: { message: 'Site monitor not found' }, status: :not_found unless @site_monitor
     end
 
     def site_monitor_params

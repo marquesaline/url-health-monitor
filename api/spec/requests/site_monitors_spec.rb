@@ -106,5 +106,38 @@ RSpec.describe 'SiteMonitors', type: :request do
       expect(parsed_response['message']).to eq('Site monitor not found')
     end
   end
+
+  describe '#uptime_percentage' do
+    it 'returns 100% when all checks are successful' do
+      create_list(:check, 5, site_monitor: site_monitor, success: true)
+      expect(site_monitor.uptime_percentage).to eq(100.0)
+    end
+
+    it 'returns 50% when half of the checks failed' do
+      create_list(:check, 3, site_monitor: site_monitor, success: true)
+      create_list(:check, 3, site_monitor: site_monitor, success: false)
+      expect(site_monitor.uptime_percentage).to eq(50.0)
+    end
+
+    it 'returns 0% when there are no successful checks' do
+      create_list(:check, 5, site_monitor: site_monitor, success: false)
+      expect(site_monitor.uptime_percentage).to eq(0.0)
+    end
+  end
+
+  describe '#average_response_time' do
+    it 'calculates the correct average response time' do
+      create(:check, site_monitor: site_monitor, response_time: 100, success: true)
+      create(:check, site_monitor: site_monitor, response_time: 200, success: true)
+      create(:check, site_monitor: site_monitor, response_time: 300, success: true)
+
+      expect(site_monitor.average_response_time).to eq(200.0)
+    end
+
+    it 'returns 0 when there are no successful checks' do
+      create_list(:check, 3, site_monitor: site_monitor, response_time: 500, success: false)
+      expect(site_monitor.average_response_time).to eq(0.0)
+    end
+  end
 end
 
