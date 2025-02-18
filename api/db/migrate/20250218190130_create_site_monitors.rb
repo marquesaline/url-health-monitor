@@ -1,6 +1,6 @@
-class CreateMonitors < ActiveRecord::Migration[7.1]
+class CreateSiteMonitors < ActiveRecord::Migration[7.1]
   def change
-    create_table :monitors do |t|
+    create_table :site_monitors do |t|
       t.string :name
       t.string :url
       t.integer :check_interval
