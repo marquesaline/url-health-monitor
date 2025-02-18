@@ -3,10 +3,11 @@ require 'rails_helper'
 RSpec.describe 'SiteMonitors', type: :request do
   let!(:site_monitor) { create(:site_monitor) }
   let(:site_monitor_id) { site_monitor.id }
-
+  let(:headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials('admin', 'supersecurepassword') } }
+  
   describe 'GET /site_monitors' do
     it 'Should return a list of site monitors' do
-      get '/site_monitors'
+      get '/site_monitors', headers: headers
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body).size).to be > 0
     end
@@ -14,13 +15,13 @@ RSpec.describe 'SiteMonitors', type: :request do
 
   describe 'GET /site_monitors/:id' do
     it 'Should return a site monitor' do
-      get "/site_monitors/#{site_monitor_id}"
+      get "/site_monitors/#{site_monitor_id}", headers: headers
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)['id']).to eq(site_monitor_id)
     end
 
     it 'Should return status 404' do
-      get '/site_monitors/9999'
+      get '/site_monitors/9999', headers: headers
       expect(response).to have_http_status(:not_found)
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['message']).to eq('Site monitor not found')
@@ -30,7 +31,7 @@ RSpec.describe 'SiteMonitors', type: :request do
       site_monitor = create(:site_monitor)
       create_list(:check, 3, site_monitor: site_monitor)
       
-      get "/site_monitors/#{site_monitor.id}"
+      get "/site_monitors/#{site_monitor.id}", headers: headers
       expect(response).to have_http_status(:success)
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['checks'].size).to eq(3)
@@ -60,13 +61,13 @@ RSpec.describe 'SiteMonitors', type: :request do
     end
 
     it 'Should create a site monitor' do
-      post '/site_monitors', params: valid_attributes
+      post '/site_monitors', params: valid_attributes, headers: headers
       expect(response).to have_http_status(:created)
       expect(JSON.parse(response.body)['name']).to eq('Test')
     end
 
     it 'Should return status 422' do
-      post '/site_monitors', params: invalid_attributes
+      post '/site_monitors', params: invalid_attributes, headers: headers
       expect(response).to have_http_status(:unprocessable_entity)
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['check_interval']).to include('must be greater than or equal to 5')
@@ -79,13 +80,13 @@ RSpec.describe 'SiteMonitors', type: :request do
     end
 
     it 'Should update a site monitor' do
-      put "/site_monitors/#{site_monitor_id}", params: valid_attributes
+      put "/site_monitors/#{site_monitor_id}", params: valid_attributes, headers: headers
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)['name']).to eq('Test')
     end
 
     it 'Should return status 404' do
-      put '/site_monitors/9999', params: valid_attributes
+      put '/site_monitors/9999', params: valid_attributes, headers: headers
       expect(response).to have_http_status(:not_found)
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['message']).to eq('Site monitor not found')
@@ -94,12 +95,12 @@ RSpec.describe 'SiteMonitors', type: :request do
 
   describe 'DELETE /site_monitors/:id' do
     it 'Should delete a site monitor' do
-      delete "/site_monitors/#{site_monitor_id}"
+      delete "/site_monitors/#{site_monitor_id}", headers: headers
       expect(response).to have_http_status(:no_content)
     end
 
     it 'Should return status 404' do
-      delete '/site_monitors/100'
+      delete '/site_monitors/100', headers: headers
       expect(response).to have_http_status(:not_found)
       parsed_response = JSON.parse(response.body)
       expect(parsed_response['message']).to eq('Site monitor not found')
