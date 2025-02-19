@@ -79,5 +79,20 @@ services:
     command: >
       sh -c "bundle exec rails db:create db:migrate && bundle exec rspec"
 
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    stdin_open: true
+    tty: true
+    
 volumes:
   postgres_data:
