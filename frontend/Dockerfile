@@ -1,4 +1,3 @@
-# Usa a imagem do Node
 FROM node:20-alpine
 
 WORKDIR /app

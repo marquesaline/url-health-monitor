@@ -1,5 +1,7 @@
 class SiteMonitorsController < ApplicationController
     before_action :set_site_monitor, only: [:show, :update, :destroy]
+    rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
     
     # GET /site_monitors
     def index 
@@ -42,12 +44,15 @@ class SiteMonitorsController < ApplicationController
     private
  
     def set_site_monitor
-        @site_monitor = SiteMonitor.find_by(id: params[:id]) 
-        return render json: { message: 'Site monitor not found' }, status: :not_found unless @site_monitor
+        @site_monitor = SiteMonitor.find(params[:id])
     end
 
     def site_monitor_params
-        params.permit(:name, :url, :check_interval, :status, :user_id)
+        params.permit(:name, :url, :check_interval, :status)
     end
-  end
+
+    def record_not_found
+        render json: { error: 'Site monitor not found' }, status: :not_found
+    end
+end
   

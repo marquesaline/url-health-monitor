@@ -20,4 +20,18 @@ class SiteMonitor < ApplicationRecord
 
         checks.average(:response_time).to_f.round(2)
     end
+
+    private
+
+    def broadcast_status_update
+        ActionCable.server.broadcast("site_monitors", {
+          id: id,
+          name: name,
+          url: url,
+          status: status,
+          last_checked_at: last_checked_at,
+          average_response_time: average_response_time,
+          uptime_percentage: uptime_percentage
+        })
+    end
 end

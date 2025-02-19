@@ -9,8 +9,12 @@ RSpec.describe 'SiteMonitors', type: :request do
     it 'Should return a list of site monitors' do
       get '/site_monitors', headers: headers
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body).size).to be > 0
+    
+      parsed_response = JSON.parse(response.body)
+      expect(parsed_response).not_to be_empty
+      expect(parsed_response.first).to include('id', 'name', 'url', 'status')
     end
+    
   end
 
   describe 'GET /site_monitors/:id' do
@@ -24,7 +28,8 @@ RSpec.describe 'SiteMonitors', type: :request do
       get '/site_monitors/9999', headers: headers
       expect(response).to have_http_status(:not_found)
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['message']).to eq('Site monitor not found')
+      expect(parsed_response['error']).to eq('Site monitor not found')
+
     end
 
     it 'Should return a site monitor with checks' do
@@ -89,7 +94,7 @@ RSpec.describe 'SiteMonitors', type: :request do
       put '/site_monitors/9999', params: valid_attributes, headers: headers
       expect(response).to have_http_status(:not_found)
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['message']).to eq('Site monitor not found')
+      expect(parsed_response['error']).to eq('Site monitor not found')
     end
   end
 
@@ -103,7 +108,8 @@ RSpec.describe 'SiteMonitors', type: :request do
       delete '/site_monitors/100', headers: headers
       expect(response).to have_http_status(:not_found)
       parsed_response = JSON.parse(response.body)
-      expect(parsed_response['message']).to eq('Site monitor not found')
+      expect(parsed_response['error']).to eq('Site monitor not found')
+
     end
   end
 
