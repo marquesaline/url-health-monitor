@@ -160,6 +160,8 @@ GEM
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.10)
+    rack-cors (2.0.2)
+      rack (>= 2.0.0)
     rack-session (2.1.0)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -259,6 +261,7 @@ DEPENDENCIES
   factory_bot_rails
   pg (~> 1.1)
   puma (>= 5.0)
+  rack-cors
   rails (~> 7.1.0)
   rest-client
   rspec-rails

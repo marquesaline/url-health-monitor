@@ -1,25 +1,4 @@
 services:
-  api:
-    build: 
-      context: ./api
-      dockerfile: Dockerfile
-    container_name: rails_api
-    depends_on:
-      - db
-    environment:
-      RAILS_ENV: development
-      POSTGRES_HOST: db
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      API_USERNAME: ${API_USERNAME}
-      API_PASSWORD: ${API_PASSWORD}
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./api:/rails
-    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
-
   db:
     image: postgres:17
     container_name: rails_db
@@ -32,6 +11,34 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: rails_api
+    depends_on:
+      db:
+        condition: service_healthy  
+    environment:
+      RAILS_ENV: development
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      VITE_API_USERNAME: ${VITE_API_USERNAME}
+      VITE_API_PASSWORD: ${VITE_API_PASSWORD}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api:/rails
+    command: >
+      sh -c "rm -f tmp/pids/server.pid && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0"
 
   redis:
     image: redis:alpine
@@ -54,8 +61,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-      API_USERNAME: ${API_USERNAME}
-      API_PASSWORD: ${API_PASSWORD}
+      VITE_API_USERNAME: ${VITE_API_USERNAME}
+      VITE_API_PASSWORD: ${VITE_API_PASSWORD}
       REDIS_URL: redis://redis:6379/0
     command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
 
@@ -70,8 +77,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_TEST_DB}
-      API_USERNAME: ${API_USERNAME}
-      API_PASSWORD: ${API_PASSWORD}
+      VITE_API_USERNAME: ${VITE_API_USERNAME}
+      VITE_API_PASSWORD: ${VITE_API_PASSWORD}
     volumes:
       - ./api:/rails
     depends_on:
