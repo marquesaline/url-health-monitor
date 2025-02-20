@@ -18,5 +18,14 @@ export default function ResponseTimeChart({ checks }) {
     ],
   };
 
-  return <Line data={data} />;
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false, 
+  };
+
+  return (
+    <div style={{ width: "600px", height: "300px", margin: "0 auto" }}> 
+      <Line data={data} options={options} />
+    </div>
+  );
 }

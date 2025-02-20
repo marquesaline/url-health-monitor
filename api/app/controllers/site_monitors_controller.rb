@@ -22,6 +22,8 @@ class SiteMonitorsController < ApplicationController
     def create
         site_monitor = SiteMonitor.new(site_monitor_params)
         if site_monitor.save
+            # Generate a MonitorCheckJob for the new SiteMonitor
+            MonitorCheckJob.perform_later(site_monitor.id)
             render json: site_monitor, status: :created
         else
             render json: site_monitor.errors, status: :unprocessable_entity

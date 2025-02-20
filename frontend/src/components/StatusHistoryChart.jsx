@@ -20,5 +20,14 @@ export default function StatusHistoryChart({ checks }) {
     ],
   };
 
-  return <Bar data={data} />;
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false, 
+  };
+
+  return (
+    <div style={{ width: "600px", height: "300px", margin: "0 auto" }}>
+      <Bar data={data} options={options} />
+    </div>
+  );
 }

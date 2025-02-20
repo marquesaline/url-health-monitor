@@ -1,11 +1,8 @@
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 const USERNAME = import.meta.env.VITE_API_USERNAME;
 const PASSWORD = import.meta.env.VITE_API_PASSWORD;
-console.log("VITE_API_URL from env:", VITE_API_URL);
-console.log("VITE_API_USERNAME from env:", USERNAME);
-console.log("VITE_API_PASSWORD from env:", PASSWORD);
 
-// Generate authentication headers
+
 const generateAuthHeaders = () => {
   const encodedAuth = btoa(`${USERNAME}:${PASSWORD}`);
   return {
@@ -23,7 +20,6 @@ const apiRequest = async (endpoint, options = {}) => {
 
     console.log("Raw Response:", response);
 
-    // Se a resposta for 204 (No Content), não tente parsear JSON
     if (response.status === 204) {
       console.log("No content received");
       return null;

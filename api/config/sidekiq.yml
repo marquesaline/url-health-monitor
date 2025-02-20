@@ -2,5 +2,5 @@
   :enabled: true
   schedule:
     monitor_check_job:
-      every: "10 minutes"
+      every: "5 minutes"
       class: "MonitorCheckScheduler"

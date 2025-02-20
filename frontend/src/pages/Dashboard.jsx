@@ -4,6 +4,7 @@ import MonitorForm from "../components/MonitorForm";
 import Modal from "../components/Modal";
 import Layout from "../components/Layout";
 import { getMonitors } from "../services/api";
+import useMonitorUpdates from "../hooks/useMonitorUpdates";
 
 export default function Dashboard() {
   const [monitors, setMonitors] = useState([]);
@@ -25,6 +26,8 @@ export default function Dashboard() {
 
     fetchMonitors();
   }, []);
+
+  useMonitorUpdates(setMonitors);
 
   const handleMonitorAdded = (newMonitor) => {
     setMonitors([...monitors, newMonitor]);
