@@ -101,7 +101,7 @@ Users can:
 - **Sort monitors** by response time.
 - **Access individual monitor details.**
 
-![Dashboard](https://prnt.sc/Jzf42Ag3UZOn)
+![Dashboard](frontend/src/assets/dash.png)
 
 ### **📈 Monitor Details - Status & Performance Insights**
 
@@ -110,4 +110,4 @@ Each monitor has a **detailed page** showing:
 - **History of status checks** (when it was `UP` or `DOWN`).
 - **Edit or delete** the monitor directly.
 
-![Monitor Details](https://prnt.sc/TCoNIrmlgW80)
+![Monitor Details](frontend/src/assets/details.png)
