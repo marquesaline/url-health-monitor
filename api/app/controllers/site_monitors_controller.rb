@@ -5,7 +5,14 @@ class SiteMonitorsController < ApplicationController
     
     # GET /site_monitors
     def index 
-        render json: SiteMonitor.all
+        site_monitors = SiteMonitor.includes(:checks)
+        render json: site_monitors.as_json(
+            include: :checks,
+            methods: [
+                :average_response_time,
+                :uptime_percentage
+            ]
+        )
     end
   
     # GET /site_monitors/:id
@@ -22,8 +29,8 @@ class SiteMonitorsController < ApplicationController
 
     def create
         site_monitor = SiteMonitor.new(site_monitor_params)
+        Rails.logger.info "Scheduling MonitorCheckJob for SiteMonitor #{site_monitor.id}"
         if site_monitor.save
-            # Generate a MonitorCheckJob for the new SiteMonitor
             MonitorCheckJob.perform_later(site_monitor.id)
             render json: site_monitor, status: :created
         else

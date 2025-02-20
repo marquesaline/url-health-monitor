@@ -1,53 +1,72 @@
-# URL Health Monitor - Backend & Frontend
+# 🌐 URL Health Monitor - Backend & Frontend
+This is a **URL health monitoring system** that allows users to track website availability, response times, and uptime percentage.  
 
-This project is a URL health monitoring system that allows users to track website availability, response times, and uptime percentage. The system includes a Rails API backend for managing monitors and performing health checks, and a React frontend for visualization.
+The system consists of:
+- **Backend (Rails API):** Manages monitors, performs periodic health checks, and processes background jobs with Sidekiq.  
+- **Frontend (React):** Provides a dashboard to visualize and manage monitored URLs.
 
-## Backend (Rails API)
+## Tech Stack
 
-The backend is a Ruby on Rails API that provides endpoints for managing monitors, checks, and statistics.
-It uses Sidekiq + Redis for background jobs and includes Basic Authentication for security.
+### Backend (Rails API)
 
-### Features
+- Ruby on Rails 7+ 
+- PostgreSQL 
+- Redis + Sidekiq
+- RSpec
 
-✅ CRUD for Site Monitors (Create, Read, Update, Delete)
+### Frontend (React)
 
-✅ Background Jobs using Sidekiq to check URL availability
+- React 
+- Tailwind CSS 
+- Chart.js / Recharts
 
-✅ Authentication (Basic Auth)
+## Features
 
-✅ Statistics (Uptime Percentage & Average Response Time)
+✅ **Monitor Websites** (CRUD for Site Monitors)  
+✅ **Automated Background Health Checks** (Sidekiq & Redis)  
+✅ **Real-time Updates** (Polling to fetch latest statuses)  
+✅ **Filtering & Sorting** (Status-based filtering, response time sorting)  
+✅ **Graphs & Charts** (Status History & Response Time Visualizations)  
+✅ **Authentication (Basic Auth)**  
+✅ **Containerized Deployment (Docker + Docker Compose)**  
+✅ **Tested Backend (RSpec)**  
 
-✅ Scheduled Jobs (Sidekiq Scheduler) for automatic health checks
 
-✅ Full Test (RSpec)
+## Setup Instructions
 
+### **Prerequisites**
 
-### How to Run the Project (Backend)
+Ensure you have:
 
-#### Prerequisites
+- **Docker** installed
 
-Make sure you have the following installed:
+### **Clone the Repository**
 
-* Docker 
-
-#### Clone the Repository
-
-```
-git clone`https://github.com/marquesaline/url-health-monitor.git
+```sh
+git clone https://github.com/marquesaline/url-health-monitor.git
 cd url-health-monitor
 ```
 
-#### Set Up the Environment Variables
+### Set Up Environment Variables
 
-Copy the `.env.example` file to .env and fill in the required variables:
+#### Backend (`.env` in root directory)
+
+Create a `.env` file based on .env.example and configure the required variables:
 
 ```
 cp .env.example .env
 ```
+#### Frontend (`.env` inside `frontend/`)
 
-#### Start the Backend Services
+Navigate to the `frontend/` folder and create the `.env` file:
 
-Run the following command to build and start all services:
+```
+cp frontend/.env.example frontend/.env
+```
+
+### Start the Full Application (Backend + Frontend)
+
+Run:
 
 ```
 docker-compose up -d --build
@@ -55,28 +74,11 @@ docker-compose up -d --build
 
 This will start:
 
-* Rails API (on port 3000)
-* PostgreSQL Database (on port 5432)
-* Redis (for Sidekiq)
-* Sidekiq Worker (to process background jobs)
-
-#### Create & Migrate the Database
-
-Once the services are running, create and migrate the database:
-
-```
-docker-compose run --rm api bundle exec rails db:create db:migrate
-```
-
-#### Running the API
-
-Once everything is set up, you can access the API at:
-
-```
-http://localhost:3000
-```
-
-Since authentication is required, you will need to send requests with Basic Auth using the credentials from the .env file.
+- Frontend (http://localhost:5173)
+- Rails API (http://localhost:3000)
+- PostgreSQL Database
+- Redis (for Sidekiq)
+- Sidekiq Worker (to process background jobs)
 
 ### Running Tests
 
@@ -86,5 +88,26 @@ To run all tests:
 docker-compose up test
 ```
 
+## User Interface
 
+### **📊 Dashboard - Overview of Monitored Websites**
 
+The **Dashboard** displays all monitored URLs with their statuses (**UP/DOWN**), response times, and filtering options.  
+
+Users can:
+
+- **Add new monitors** to track websites.
+- **Filter by status** (`UP` / `DOWN`).
+- **Sort monitors** by response time.
+- **Access individual monitor details.**
+
+![Dashboard](https://prnt.sc/Jzf42Ag3UZOn)
+
+### **📈 Monitor Details - Status & Performance Insights**
+
+Each monitor has a **detailed page** showing:
+- **Response time trends** over time.
+- **History of status checks** (when it was `UP` or `DOWN`).
+- **Edit or delete** the monitor directly.
+
+![Monitor Details](https://prnt.sc/TCoNIrmlgW80)
