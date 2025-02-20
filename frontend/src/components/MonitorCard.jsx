@@ -1,21 +1,68 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import Modal from "./Modal";
+import MonitorForm from "./MonitorForm";
+import { deleteMonitor } from "../services/api";
 
-export default function MonitorCard({ monitor }) {
+export default function MonitorCard({ monitor, onMonitorUpdated, onMonitorDeleted }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete ${monitor.name}?`)) {
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      await deleteMonitor(monitor.id);
+      onMonitorDeleted(monitor.id); // Remove da UI
+    } catch (err) {
+      setError("Failed to delete monitor.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200">
-      <h2 className="text-lg font-semibold text-gray-800">{monitor.name}</h2>
-      <p className="text-sm text-gray-500">{monitor.url}</p>
+    <div className="border p-4 bg-white rounded shadow">
+      <h3 className="text-lg font-semibold">{monitor.name}</h3>
+      <p className="text-gray-600">{monitor.url}</p>
+      <p>
+        Status: {monitor.status === "up" ? "🟢 Online" : "🔴 Offline"}
+      </p>
 
-      <div className="mt-3 flex items-center">
-        <span className={`inline-block w-3 h-3 rounded-full ${monitor.status === "up" ? "bg-green-500" : "bg-red-500"}`}></span>
-        <span className="ml-2 text-gray-600">{monitor.status === "up" ? "Online" : "Offline"}</span>
+      {error && <p className="text-red-500">{error}</p>}
+
+      <div className="flex gap-2 mt-4">
+        <Link to={`/monitor/${monitor.id}`} className="bg-blue-500 text-white px-4 py-2 rounded shadow">
+          View Details
+        </Link>
+        <button
+          onClick={() => setIsEditing(true)}
+          className="bg-yellow-500 text-white px-3 py-1 rounded"
+        >
+          Edit
+        </button>
+        <button
+          onClick={handleDelete}
+          className="bg-red-500 text-white px-3 py-1 rounded"
+          disabled={loading}
+        >
+          {loading ? "Deleting..." : "Delete"}
+        </button>
       </div>
 
-      <p className="text-xs text-gray-400 mt-2">Last check: {new Date(monitor.last_checked_at).toLocaleString()}</p>
-
-      <Link to={`/monitor/${monitor.id}`} className="text-blue-500 underline mt-2 block">
-        View Details
-      </Link>
+      <Modal isOpen={isEditing} onClose={() => setIsEditing(false)}>
+        <MonitorForm 
+          monitor={monitor} 
+          onMonitorUpdated={onMonitorUpdated} 
+          onClose={() => setIsEditing(false)}
+        />
+      </Modal>
     </div>
   );
 }

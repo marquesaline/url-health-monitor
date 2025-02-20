@@ -25,7 +25,6 @@ const apiRequest = async (endpoint, options = {}) => {
       return null;
     }
 
-    // ✅ Ler o JSON apenas uma vez
     const data = await response.json();
     console.log("Parsed JSON Response:", data);
 

@@ -1,15 +1,25 @@
-import { useState } from "react";
-import { createMonitor } from "../services/api";
+import { useState, useEffect } from "react";
+import { createMonitor, updateMonitor } from "../services/api";
 
-export default function MonitorForm({ onMonitorAdded }) {
+export default function MonitorForm({ monitor, onMonitorUpdated, onMonitorAdded, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
     url: "",
-    check_interval: 5, 
+    check_interval: 5,
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (monitor) {
+      setFormData({
+        name: monitor.name,
+        url: monitor.url,
+        check_interval: monitor.check_interval,
+      });
+    }
+  }, [monitor]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,11 +31,19 @@ export default function MonitorForm({ onMonitorAdded }) {
     setError("");
 
     try {
-      const newMonitor = await createMonitor(formData);
-      onMonitorAdded(newMonitor); 
-      setFormData({ name: "", url: "", check_interval: 5 });
+      let savedMonitor;
+
+      if (monitor) {
+        savedMonitor = await updateMonitor(monitor.id, formData);
+        onMonitorUpdated(savedMonitor);
+      } else {
+        savedMonitor = await createMonitor(formData);
+        onMonitorAdded(savedMonitor);
+      }
+      onClose();
     } catch (err) {
-      setError("Failed to add monitor. Please try again.");
+      console.error("Save Error:", err);
+      setError("Failed to save monitor. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -33,7 +51,9 @@ export default function MonitorForm({ onMonitorAdded }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-4 shadow rounded">
-      <h2 className="text-xl font-bold mb-4">Add New Monitor</h2>
+      <h2 className="text-xl font-bold mb-4">
+        {monitor ? "Edit Monitor" : "Add New Monitor"}
+      </h2>
 
       {error && <p className="text-red-500">{error}</p>}
 
@@ -79,7 +99,7 @@ export default function MonitorForm({ onMonitorAdded }) {
         className="bg-blue-500 text-white px-4 py-2 rounded"
         disabled={loading}
       >
-        {loading ? "Adding..." : "Add Monitor"}
+        {loading ? "Saving..." : monitor ? "Save Changes" : "Add Monitor"}
       </button>
     </form>
   );

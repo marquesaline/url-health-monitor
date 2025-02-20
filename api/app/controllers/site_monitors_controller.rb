@@ -10,6 +10,7 @@ class SiteMonitorsController < ApplicationController
   
     # GET /site_monitors/:id
     def show
+        MonitorCheckJob.perform_later(@site_monitor.id)
         render json: @site_monitor.as_json(
             include: :checks,
             methods: [
@@ -32,6 +33,7 @@ class SiteMonitorsController < ApplicationController
 
     def update
         if @site_monitor.update(site_monitor_params)
+            MonitorCheckJob.perform_later(@site_monitor.id)
             render json: @site_monitor
         else
             render json: @site_monitor.errors, status: :unprocessable_entity

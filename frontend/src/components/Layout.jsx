@@ -8,8 +8,6 @@ export default function Layout({ children }) {
         </nav>
       </header>
 
-
-
       <main className="flex-grow w-full container mx-auto p-6">
         {children}
       </main>
